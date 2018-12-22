@@ -19,21 +19,6 @@ export interface ICollection<TKey, TValue> {
 // TODO: Missing firstKey(), last(), lastKey(), middle(), middleKey(), random(), randomKey()
 // TODO: Currently having booleans as values in collections may cause problems because of the || checks, specifically for first() and last()
 export default class Collection<TKey, TValue> extends Map<TKey, TValue> implements ICollection<TKey, TValue> {
-    clone(): ICollection<TKey, TValue> {
-        throw new Error("Method not implemented.");
-    }
-    concat(...collections: ICollection<TKey, TValue>[]): ICollection<TKey, TValue> {
-        throw new Error("Method not implemented.");
-    }
-    map(callback: CollectionMapCallback<TKey, TValue>): this | ICollection<TKey, TValue> {
-        throw new Error("Method not implemented.");
-    }
-    filter(callback: CollectionMapCallback<TKey, TValue>): ICollection<TKey, TValue> {
-        throw new Error("Method not implemented.");
-    }
-    reduce(callback: CollectionMapCallback<TKey, TValue>): this | ICollection<TKey, TValue> {
-        throw new Error("Method not implemented.");
-    }
     protected valueCache: TValue[] | null;
     protected keyCache: TKey[] | null;
 
