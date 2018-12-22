@@ -1,9 +1,42 @@
 type CollectionMapCallback<TKey, TValue> = (value: TValue, key: TKey) => TValue;
 
-export default class Collection<TKey, TValue> extends Map<TKey, TValue> {
+export interface ICollection<TKey, TValue> {
+    first(): TValue | null;
+    array(): TValue[];
+    clone(): ICollection<TKey, TValue>;
+    concat(...collections: ICollection<TKey, TValue>[]): ICollection<TKey, TValue>;
+    map(callback: CollectionMapCallback<TKey, TValue>): this | ICollection<TKey, TValue>;
+    filter(callback: CollectionMapCallback<TKey, TValue>): ICollection<TKey, TValue>;
+    reduce(callback: CollectionMapCallback<TKey, TValue>): this | ICollection<TKey, TValue>;
+    clear(): void;
+    delete(key: TKey): boolean;
+    get(key: TKey): TValue | null;
+    has(key: TKey): boolean;
+    set(key: TKey, value: TValue): this | ICollection<TKey, TValue>;
+    readonly size: number;
+}
+
+// TODO: Missing firstKey(), last(), lastKey(), middle(), middleKey(), random(), randomKey()
+// TODO: Currently having booleans as values in collections may cause problems because of the || checks, specifically for first() and last()
+export default class Collection<TKey, TValue> extends Map<TKey, TValue> implements ICollection<TKey, TValue> {
+    clone(): ICollection<TKey, TValue> {
+        throw new Error("Method not implemented.");
+    }
+    concat(...collections: ICollection<TKey, TValue>[]): ICollection<TKey, TValue> {
+        throw new Error("Method not implemented.");
+    }
+    map(callback: CollectionMapCallback<TKey, TValue>): this | ICollection<TKey, TValue> {
+        throw new Error("Method not implemented.");
+    }
+    filter(callback: CollectionMapCallback<TKey, TValue>): ICollection<TKey, TValue> {
+        throw new Error("Method not implemented.");
+    }
+    reduce(callback: CollectionMapCallback<TKey, TValue>): this | ICollection<TKey, TValue> {
+        throw new Error("Method not implemented.");
+    }
     protected valueCache: TValue[] | null;
     protected keyCache: TKey[] | null;
-    
+
     // TODO: Type of entries
     public constructor(entries?: any) {
         super(entries);
@@ -11,7 +44,7 @@ export default class Collection<TKey, TValue> extends Map<TKey, TValue> {
         this.valueCache = [];
         this.keyCache = [];
     }
-    
+
     public set(key: TKey, value: TValue): this {
         if (this.keyCache && !this.keyCache.includes(key)) {
             this.keyCache.push(key);
@@ -26,7 +59,7 @@ export default class Collection<TKey, TValue> extends Map<TKey, TValue> {
         return this;
     }
 
-    public first(): TValue {
+    public first(): TValue | undefined {
         return this.values().next().value;
     }
 
@@ -50,7 +83,7 @@ export default class Collection<TKey, TValue> extends Map<TKey, TValue> {
         return result;
     }
 
-    public map(callback: CollectionMapCallback<TKey, TValue>): this {
+    public map(callback: CollectionMapCallback<TKey, TValue>): Collection<TKey, TValue> {
         for (const [key, value] of this) {
             callback(value, key);
         }
@@ -58,7 +91,7 @@ export default class Collection<TKey, TValue> extends Map<TKey, TValue> {
         return this;
     }
 
-    public reduce(callback: CollectionMapCallback<TKey, TValue>): this {
+    public reduce(callback: CollectionMapCallback<TKey, TValue>): Collection<TKey, TValue> {
         for (const [key, value] of this) {
             if (!callback(value, key)) {
                 this.delete(key);
