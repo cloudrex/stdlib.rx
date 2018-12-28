@@ -3,7 +3,7 @@ export interface IQueue<T> {
     dequeue(): T | null;
     first(): T | null;
     last(): T | null;
-    size: number;
+    readonly size: number;
 }
 
 export default class Queue<T> implements IQueue<T> {
