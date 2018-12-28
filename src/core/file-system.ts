@@ -117,7 +117,7 @@ export interface IPathInfo {
     readonly fullFileName: string;
 }
 
-enum PathType {
+export enum PathType {
     File,
     Directory,
     Other

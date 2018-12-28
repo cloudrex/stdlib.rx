@@ -1,0 +1,26 @@
+{
+    "name": "xlib",
+    "version": "1.0.0",
+    "description": "Utility library",
+    "main": "dist/index.js",
+    "scripts": {
+        "build": "tsc"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/cloudrex/xlib.git"
+    },
+    "keywords": [
+        "utility",
+        "library"
+    ],
+    "author": "CloudRex <cloudrex@outlook.com>",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/cloudrex/xlib/issues"
+    },
+    "homepage": "https://github.com/cloudrex/xlib#readme",
+    "devDependencies": {
+        "@types/node": "^10.12.18"
+    }
+}

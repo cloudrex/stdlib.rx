@@ -1,4 +1,4 @@
-enum CommonProtocol {
+export enum CommonProtocol {
     HTTP = "http",
     HTTPS = "https",
     FTP = "ftp",

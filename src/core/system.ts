@@ -1,11 +1,7 @@
 import {FileHandle} from "./file-system";
 import fs from "fs";
 
-export const hiddenPropertySuffix: string = "$$stdrx_";
-
-export interface IDisposable {
-    dispose(): void;
-}
+export const hiddenPropertySuffix: string = "$$xlib_";
 
 export type PromiseOr<T> = Promise<T> | T;
 
