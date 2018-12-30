@@ -1,10 +1,11 @@
 {
-    "name": "xlib",
+    "name": "@atlas/xlib",
     "version": "1.0.0-alpha.0",
     "description": "Utility library",
     "main": "dist/index.js",
     "scripts": {
-        "build": "tsc"
+        "build": "tsc",
+        "prepare": "npm run build"
     },
     "repository": {
         "type": "git",
