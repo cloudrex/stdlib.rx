@@ -1,6 +1,6 @@
-import {ISizable, IIterable, IClonable} from "../core/interfaces";
+import {ISizable, IIterable as IPairIterable, IClonable} from "../core/interfaces";
 
-type CollectionMapCallback<TKey, TValue> = (value: TValue, key: TKey) => TValue;
+export type CollectionMapCallback<TKey, TValue> = (value: TValue, key: TKey) => TValue;
 
 export interface ILinearCollection<T> {
     first(): T | undefined;
@@ -8,7 +8,7 @@ export interface ILinearCollection<T> {
     clear(): this;
 }
 
-export interface IMap<TKey, TValue> extends ISizable, IIterable<TValue>, ILinearCollection<TValue>, IClonable<IMap<TKey, TValue>> {
+export interface IMap<TKey, TValue> extends ISizable, IPairIterable<TKey, TValue>, ILinearCollection<TValue>, IClonable<IMap<TKey, TValue>> {
     concat(...collections: IMap<TKey, TValue>[]): IMap<TKey, TValue>;
     map<T = any>(callback: CollectionMapCallback<TKey, TValue>): T;
     filter(callback: CollectionMapCallback<TKey, TValue>): IMap<TKey, TValue>;
@@ -33,8 +33,8 @@ export default class Dictionary<TKey, TValue> implements IMap<TKey, TValue> {
         this.keyCache = [];
     }
 
-    [Symbol.iterator](): IterableIterator<TValue> {
-        return this.data.values();
+    [Symbol.iterator](): IterableIterator<[TKey, TValue]> {
+        return this.data.entries();
     }
 
     public set(key: TKey, value: TValue): this {
@@ -66,12 +66,12 @@ export default class Dictionary<TKey, TValue> implements IMap<TKey, TValue> {
         return this.valueCache ? this.valueCache : this.valueCache = [...this.data.values()];
     }
 
-    public clone(): Dictionary<TKey, TValue> {
+    public clone(): IMap<TKey, TValue> {
         return new Dictionary(...this.data.entries());
     }
 
-    public concat(...collections: Dictionary<TKey, TValue>[]): Dictionary<TKey, TValue> {
-        const result: Dictionary<TKey, TValue> = this.clone();
+    public concat(...collections: IMap<TKey, TValue>[]): IMap<TKey, TValue> {
+        const result: IMap<TKey, TValue> = this.clone();
 
         for (const collection of collections) {
             for (const [key, value] of collection) {
@@ -82,7 +82,7 @@ export default class Dictionary<TKey, TValue> implements IMap<TKey, TValue> {
         return result;
     }
 
-    public map(callback: CollectionMapCallback<TKey, TValue>): Dictionary<TKey, TValue> {
+    public map(callback: CollectionMapCallback<TKey, TValue>): any {
         for (const [key, value] of this) {
             callback(value, key);
         }
@@ -90,7 +90,7 @@ export default class Dictionary<TKey, TValue> implements IMap<TKey, TValue> {
         return this;
     }
 
-    public reduce(callback: CollectionMapCallback<TKey, TValue>): Dictionary<TKey, TValue> {
+    public reduce(callback: CollectionMapCallback<TKey, TValue>): this {
         for (const [key, value] of this) {
             if (!callback(value, key)) {
                 this.data.delete(key);
@@ -100,8 +100,8 @@ export default class Dictionary<TKey, TValue> implements IMap<TKey, TValue> {
         return this;
     }
 
-    public filter(callback: CollectionMapCallback<TKey, TValue>): Dictionary<TKey, TValue> {
-        const result: Dictionary<TKey, TValue> = this.clone();
+    public filter(callback: CollectionMapCallback<TKey, TValue>): IMap<TKey, TValue> {
+        const result: IMap<TKey, TValue> = this.clone();
 
         for (const [key, value] of this) {
             if (callback(value, key)) {

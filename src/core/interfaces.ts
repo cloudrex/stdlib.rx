@@ -10,6 +10,6 @@ export interface ISizable {
     readonly size: number;
 }
 
-export interface IIterable<T> {
-    [Symbol.iterator](): IterableIterator<T>;
+export interface IIterable<TKey, TValue> {
+    [Symbol.iterator](): IterableIterator<[TKey, TValue]>;
 }

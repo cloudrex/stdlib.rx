@@ -1,4 +1,4 @@
-import Dictionary, {IMap} from "./collection";
+import Dictionary, {IMap, CollectionMapCallback} from "./collection";
 
 export interface IImmutableCollection<TKey, TValue> {
     first(): TValue | undefined;
@@ -17,11 +17,11 @@ export interface IImmutableCollection<TKey, TValue> {
 
 export default class ImmutableDictionary<TKey, TValue> extends Dictionary<TKey, TValue> {
     public array(): TValue[] {
-        return this.valueCache ? this.valueCache : this.valueCache = [...this.values()];
+        return this.valueCache ? this.valueCache : this.valueCache = [...this.data.values()];
     }
 
     public concat(...collections: IMap<TKey, TValue>[]): IMap<TKey, TValue> {
-        const result: ImmutableDictionary<TKey, TValue> = this.clone();
+        const result: IMap<TKey, TValue> = this.clone();
 
         for (const collection of collections) {
             for (const [key, value] of collection) {
@@ -40,7 +40,7 @@ export default class ImmutableDictionary<TKey, TValue> extends Dictionary<TKey, 
         return this;
     }
 
-    public reduce(callback: (value: TValue, key: TKey) => TValue): IMap<TKey, TValue> {
+    public reduce(callback: (value: TValue, key: TKey) => TValue): this {
         for (const [key, value] of this) {
             if (!callback(value, key)) {
                 this.delete(key);
@@ -50,7 +50,7 @@ export default class ImmutableDictionary<TKey, TValue> extends Dictionary<TKey, 
         return this;
     }
 
-    public filter(callback: (value: TValue, key: TKey) => TValue): ImmutableDictionary<TKey, TValue> {
+    public filter(callback: (value: TValue, key: TKey) => TValue): IMap<TKey, TValue> {
         throw new Error("Method not implemented.");
     }
 }
