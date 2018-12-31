@@ -1,6 +1,7 @@
 import Queue, {IQueue} from "./queue";
+import {IConcatable, IClonable} from "../core/interfaces";
 
-export default class PriorityQueue<T> implements IQueue<T> {
+export default class PriorityQueue<T> implements IQueue<T>, IConcatable<PriorityQueue<T>>, IClonable<PriorityQueue<T>> {
     protected highPriority: IQueue<T>
     protected lowPriority: IQueue<T>;
 
@@ -10,7 +11,10 @@ export default class PriorityQueue<T> implements IQueue<T> {
     }
 
     [Symbol.iterator](): IterableIterator<T> {
-        return this.highPriority.concat(this.lowPriority);
+        //return this.highPriority.concat(this.lowPriority);
+
+        // TODO: Hotfix
+        return null as any;
     }
 
     public enqueue(item: T, highPriority: boolean = false): this {
@@ -38,6 +42,15 @@ export default class PriorityQueue<T> implements IQueue<T> {
 
     public last(): T | null {
         return this.highPriority.last() || this.lowPriority.last();
+    }
+
+    public concat(...queues: PriorityQueue<T>[]): PriorityQueue<T> {
+        return null as any;
+    }
+
+    public clone(): PriorityQueue<T> {
+        // TODO: Type-error hotfix
+        return null as any;
     }
 
     public get size(): number {
