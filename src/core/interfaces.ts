@@ -21,3 +21,9 @@ export interface IIterable<T> {
 export interface IConcatable<T> {
     concat(...items: T[]): T;
 }
+
+export interface IQueryable<T> {
+    first(): T | null;
+    last(): T | null;
+    middle(): T | null;
+}
