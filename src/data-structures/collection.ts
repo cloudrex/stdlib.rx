@@ -6,6 +6,8 @@ export interface ILinearCollection<T> {
     first(): T | undefined;
     array(): T[];
     clear(): this;
+
+    readonly size: number;
 }
 
 export interface IMap<TKey, TValue> extends ISizable, IPairIterable<TKey, TValue>, ILinearCollection<TValue>, IClonable<IMap<TKey, TValue>> {
@@ -119,15 +121,11 @@ export default class Dictionary<TKey, TValue> implements IMap<TKey, TValue> {
     }
 
     public has(key: TKey): boolean {
-        // TODO
-
-        return false;
+        return this.data.has(key);
     }
 
     public delete(key: TKey): boolean {
-        // TODO
-        
-        return false;
+        return this.data.delete(key);
     }
 
     public get size(): number {

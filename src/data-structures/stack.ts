@@ -1,3 +1,11 @@
+export interface IStack<T> {
+    push(item: T): this;
+    pop(): T | null;
+    peek(): T | null;
+
+    readonly empty: boolean;
+}
+
 export default class Stack<T> {
     protected items: T[];
 

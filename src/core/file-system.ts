@@ -1,7 +1,22 @@
 import fs, {Stats} from "fs";
 import {IDisposable} from "./interfaces";
 
-export class FileHandle implements IDisposable {
+export interface IFileHandle {
+    move(destination: string): Promise<boolean>;
+    moveSync(destination: string): boolean;
+    readAll(): Promise<Buffer>;
+    readAllAsString(): Promise<string>;
+    readAllAsJson<T extends object>(): Promise<T>;
+    load(): Promise<Buffer>;
+    reload(): Promise<Buffer>;
+    unload(): Promise<this>;
+
+    readonly exists: boolean;
+    readonly loaded: boolean;
+    readonly path: Path;
+}
+
+export class FileHandle implements IFileHandle, IDisposable {
     public readonly path: Path;
 
     protected buffer: Buffer | null;

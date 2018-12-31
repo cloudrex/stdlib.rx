@@ -1,7 +1,7 @@
 import {FileHandle} from "./file-system";
 import fs from "fs";
 
-export const hiddenPropertySuffix: string = "$$xlib_";
+export const HiddenPropertySuffix: string = "$$xlib_";
 
 export type PromiseOr<T> = Promise<T> | T;
 
