@@ -17,3 +17,7 @@ export interface IPairIterable<TKey, TValue> {
 export interface IIterable<T> {
     [Symbol.iterator](): IterableIterator<T>;
 }
+
+export interface IConcatable<T> {
+    concat(...items: T[]): T;
+}

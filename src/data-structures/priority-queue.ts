@@ -1,12 +1,16 @@
 import Queue, {IQueue} from "./queue";
 
 export default class PriorityQueue<T> implements IQueue<T> {
-    protected highPriority: Queue<T>
-    protected lowPriority: Queue<T>;
+    protected highPriority: IQueue<T>
+    protected lowPriority: IQueue<T>;
 
     public constructor() {
         this.highPriority = new Queue();
         this.lowPriority = new Queue();
+    }
+
+    [Symbol.iterator](): IterableIterator<T> {
+        return this.highPriority.concat(this.lowPriority);
     }
 
     public enqueue(item: T, highPriority: boolean = false): this {

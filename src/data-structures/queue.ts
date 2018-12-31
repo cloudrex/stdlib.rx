@@ -1,6 +1,6 @@
-import {IPairIterable, IIterable} from "../core/interfaces";
+import {IIterable, IConcatable, IClonable} from "../core/interfaces";
 
-export interface IQueue<T> extends IIterable<T> {
+export interface IQueue<T> extends IIterable<T>, IConcatable<IQueue<T>>, IClonable<IQueue<T>> {
     enqueue(item: T): void;
     dequeue(): T | null;
     first(): T | null;
@@ -12,8 +12,8 @@ export interface IQueue<T> extends IIterable<T> {
 export default class Queue<T> implements IQueue<T> {
     protected items: T[];
 
-    public constructor(items: T[] = []) {
-        this.items = items;
+    public constructor(...items: T[]) {
+        this.items = items !== undefined ? items : [];
     }
 
     [Symbol.iterator](): IterableIterator<T> {
@@ -36,6 +36,22 @@ export default class Queue<T> implements IQueue<T> {
 
     public last(): T | null {
         return this.items[this.items.length - 1] || null;
+    }
+
+    public concat(...queues: IQueue<T>[]): IQueue<T> {
+        const result: IQueue<T> = this.clone();
+
+        for (const queue of queues) {
+            for (const item of queue) {
+                result.enqueue(item);
+            }
+        }
+
+        return result;
+    }
+
+    public clone(): IQueue<T> {
+        return new Queue(...this.items);
     }
 
     public get size(): number {
