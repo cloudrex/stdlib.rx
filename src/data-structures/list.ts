@@ -1,8 +1,8 @@
-import {IClonable, ISizable} from "../core/interfaces";
+import {IClonable, ISizable, IIterable} from "../core/interfaces";
 
 type ListMapCallback<TItem, TReturn> = (item: TItem) => TReturn;
 
-export interface IGenericList<T> extends IClonable<IGenericList<T>>, ISizable {
+export interface IGenericList<T> extends IClonable<IGenericList<T>>, ISizable, IIterable<T> {
     add(...items: T[]): this | number;
     map(callback: ListMapCallback<T, T>): T[];
     filter(callback: ListMapCallback<T, boolean>): IGenericList<T>;
@@ -32,6 +32,10 @@ export abstract class GenericList<T> implements IGenericList<T> {
 
     public constructor(...items: T[]) {
         this.items = items !== undefined ? items : [];
+    }
+
+    [Symbol.iterator](): IterableIterator<T> {
+        return this.items.values();
     }
 
     public abstract add(item: T): this | number;

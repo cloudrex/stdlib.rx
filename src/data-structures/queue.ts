@@ -1,8 +1,11 @@
-export interface IQueue<T> {
+import {IPairIterable, IIterable} from "../core/interfaces";
+
+export interface IQueue<T> extends IIterable<T> {
     enqueue(item: T): void;
     dequeue(): T | null;
     first(): T | null;
     last(): T | null;
+
     readonly size: number;
 }
 
@@ -11,6 +14,10 @@ export default class Queue<T> implements IQueue<T> {
 
     public constructor(items: T[] = []) {
         this.items = items;
+    }
+
+    [Symbol.iterator](): IterableIterator<T> {
+        return this.items.values();
     }
 
     public enqueue(item: T): this {

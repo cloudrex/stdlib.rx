@@ -1,4 +1,12 @@
-export default class LinkedList<T> {
+export interface ILinkedList<T> {
+    addToHead(value: T): this;
+    addToTail(value: T): this;
+    removeHead(): T | null;
+    removeTail(): T | null;
+    search(value: T): ILinkedListNode<T> | null;
+}
+
+export default class LinkedList<T> implements ILinkedList<T> {
     protected head: ILinkedListNode<T> | null;
     protected tail: ILinkedListNode<T> | null;
 

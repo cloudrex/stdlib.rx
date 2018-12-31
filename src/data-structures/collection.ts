@@ -1,4 +1,4 @@
-import {ISizable, IIterable as IPairIterable, IClonable} from "../core/interfaces";
+import {ISizable, IPairIterable, IClonable} from "../core/interfaces";
 
 export type CollectionMapCallback<TKey, TValue> = (value: TValue, key: TKey) => TValue;
 
