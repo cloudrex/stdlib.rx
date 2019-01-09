@@ -32,6 +32,7 @@ export default class ImmutableDictionary<TKey, TValue> extends Dictionary<TKey, 
         return result;
     }
 
+    // TODO: Map changes all items
     public map(callback: (value: TValue, key: TKey) => TValue): this {
         for (const [key, value] of this) {
             callback(value, key);
