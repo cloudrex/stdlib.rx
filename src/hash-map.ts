@@ -1,6 +1,5 @@
-import {ISizable, IIterable, IClonable} from "../core/interfaces";
-
-type CollectionMapCallback<TKey, TValue> = (value: TValue, key: TKey) => TValue;
+type HashMapCallback<TKey, TValue> = (value: TValue, key: TKey) => TValue;
+type HashMapTransformCallback<TKey, TValue, TResult> = (value: TValue, key: TKey) => TResult;
 
 export interface ILinearCollection<T> {
     first(): T | undefined;
@@ -8,33 +7,34 @@ export interface ILinearCollection<T> {
     clear(): this;
 }
 
-export interface IMap<TKey, TValue> extends ISizable, IIterable<TValue>, ILinearCollection<TValue>, IClonable<IMap<TKey, TValue>> {
-    concat(...collections: IMap<TKey, TValue>[]): IMap<TKey, TValue>;
-    map<T = any>(callback: CollectionMapCallback<TKey, TValue>): T;
-    filter(callback: CollectionMapCallback<TKey, TValue>): IMap<TKey, TValue>;
-    reduce(callback: CollectionMapCallback<TKey, TValue>): this;
+export interface IHashMap<TKey, TValue> {
+    [Symbol.iterator](): IterableIterator<[TKey, TValue]>;
+    concat(...hashMaps: IHashMap<TKey, TValue>[]): IHashMap<TKey, TValue>;
+    map<T = any>(callback: HashMapTransformCallback<TKey, TValue, T>): T[];
+    filter(callback: HashMapCallback<TKey, TValue>): IHashMap<TKey, TValue>;
+    reduce(callback: HashMapCallback<TKey, TValue>): this;
     delete(key: TKey): boolean;
     get(key: TKey): TValue | undefined;
     has(key: TKey): boolean;
     set(key: TKey, value: TValue): this;
 }
 
-// TODO: Missing firstKey(), last(), lastKey(), middle(), middleKey(), random(), randomKey()
-// TODO: Currently having booleans as values in collections may cause problems because of the || checks, specifically for first() and last()
-export default class Dictionary<TKey, TValue> implements IMap<TKey, TValue> {
+// TODO: Missing firstKey(), last(), lastKey(), middle(), middleKey(), random(), randomKey().
+// TODO: Currently having booleans as values in collections may cause problems because of the || checks, specifically for first() and last().
+export default class HashMap<TKey, TValue> implements IHashMap<TKey, TValue> {
     protected valueCache: TValue[] | null;
     protected keyCache: TKey[] | null;
     protected data: Map<TKey, TValue>;
 
-    // TODO: Type of entries
+    // TODO: Type of entries.
     public constructor(entries?: any) {
         this.data = new Map(entries);
         this.valueCache = [];
         this.keyCache = [];
     }
 
-    [Symbol.iterator](): IterableIterator<TValue> {
-        return this.data.values();
+    [Symbol.iterator](): IterableIterator<[TKey, TValue]> {
+        return this.data.entries();
     }
 
     public set(key: TKey, value: TValue): this {
@@ -66,31 +66,33 @@ export default class Dictionary<TKey, TValue> implements IMap<TKey, TValue> {
         return this.valueCache ? this.valueCache : this.valueCache = [...this.data.values()];
     }
 
-    public clone(): Dictionary<TKey, TValue> {
-        return new Dictionary(...this.data.entries());
+    public clone(): HashMap<TKey, TValue> {
+        return new HashMap(...this.data.entries());
     }
 
-    public concat(...collections: Dictionary<TKey, TValue>[]): Dictionary<TKey, TValue> {
-        const result: Dictionary<TKey, TValue> = this.clone();
+    public concat(...hashMaps: IHashMap<TKey, TValue>[]): IHashMap<TKey, TValue> {
+        const result: HashMap<TKey, TValue> = this.clone();
 
-        for (const collection of collections) {
-            for (const [key, value] of collection) {
+        for (const hashMap of hashMaps) {
+            for (const [key, value] of hashMap) {
                 result.set(key, value);
             }
+        }
+
+        return result as any;
+    }
+
+    public map<T = any>(callback: HashMapTransformCallback<TKey, TValue, T>): T[] {
+        const result: T[] = [];
+
+        for (const [key, value] of this) {
+            result.push(callback(value, key));
         }
 
         return result;
     }
 
-    public map(callback: CollectionMapCallback<TKey, TValue>): Dictionary<TKey, TValue> {
-        for (const [key, value] of this) {
-            callback(value, key);
-        }
-
-        return this;
-    }
-
-    public reduce(callback: CollectionMapCallback<TKey, TValue>): Dictionary<TKey, TValue> {
+    public reduce(callback: HashMapCallback<TKey, TValue>): this {
         for (const [key, value] of this) {
             if (!callback(value, key)) {
                 this.data.delete(key);
@@ -100,8 +102,8 @@ export default class Dictionary<TKey, TValue> implements IMap<TKey, TValue> {
         return this;
     }
 
-    public filter(callback: CollectionMapCallback<TKey, TValue>): Dictionary<TKey, TValue> {
-        const result: Dictionary<TKey, TValue> = this.clone();
+    public filter(callback: HashMapCallback<TKey, TValue>): IHashMap<TKey, TValue> {
+        const result: HashMap<TKey, TValue> = this.clone();
 
         for (const [key, value] of this) {
             if (callback(value, key)) {
@@ -126,7 +128,7 @@ export default class Dictionary<TKey, TValue> implements IMap<TKey, TValue> {
 
     public delete(key: TKey): boolean {
         // TODO
-        
+
         return false;
     }
 

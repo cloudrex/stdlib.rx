@@ -1,11 +1,9 @@
-import {IClonable, ISizable} from "../core/interfaces";
-
 type ListMapCallback<TItem, TReturn> = (item: TItem) => TReturn;
 
-export interface IGenericList<T> extends IClonable<IGenericList<T>>, ISizable {
-    add(...items: T[]): this | number;
+export interface IList<T> {
+    add(...items: T[]): this;
     map(callback: ListMapCallback<T, T>): T[];
-    filter(callback: ListMapCallback<T, boolean>): IGenericList<T>;
+    filter(callback: ListMapCallback<T, boolean>): IList<T>;
     remove(item: T): boolean;
     removeAll(item: T): number;
     removeAt(index: number): boolean;
@@ -23,27 +21,29 @@ export interface IGenericList<T> extends IClonable<IGenericList<T>>, ISizable {
     json(): string;
 }
 
-export interface IList<T> extends IGenericList<T> {
-    add(...items: T[]): this;
-}
-
-export abstract class GenericList<T> implements IGenericList<T> {
+export default class List<T> implements IList<T> {
     protected items: T[];
 
     public constructor(...items: T[]) {
         this.items = items !== undefined ? items : [];
     }
 
-    public abstract add(item: T): this | number;
+    public add(item: T): this {
+        // TODO: Implement.
+        throw new Error("Not yet implemented");
+    }
 
-    public abstract clone(): IGenericList<T>;
+    public clone(): IList<T> {
+        // TODO: Implement.
+        throw new Error("Not yet implemented");
+    }
 
     public map(callback: ListMapCallback<T, T>): T[] {
         return this.items.map(callback);
     }
 
-    public filter(callback: ListMapCallback<T, boolean>): IGenericList<T> {
-        const result: IGenericList<T> = this.clone();
+    public filter(callback: ListMapCallback<T, boolean>): IList<T> {
+        const result: IList<T> = this.clone();
 
         // TODO
         throw new Error("Method not implemented.");
@@ -82,7 +82,7 @@ export abstract class GenericList<T> implements IGenericList<T> {
 
         return this;
     }
-    
+
     public reduce(callback: ListMapCallback<T, boolean>): this {
         for (let i: number = 0; i < this.items.length; i++) {
             if (!callback(this.items[i])) {
@@ -118,7 +118,7 @@ export abstract class GenericList<T> implements IGenericList<T> {
     public pop(): T | undefined {
         return this.items.pop();
     }
-    
+
     public shift(): T {
         return this.shift();
     }
@@ -145,8 +145,8 @@ export abstract class GenericList<T> implements IGenericList<T> {
         return JSON.stringify(this.items);
     }
 
-    public contact(...lists: IGenericList<T>[]): IGenericList<T> {
-        const result: IGenericList<T> = this.clone();
+    public contact(...lists: IList<T>[]): IList<T> {
+        const result: IList<T> = this.clone();
 
         for (const list of lists) {
             // TODO
@@ -158,17 +158,5 @@ export abstract class GenericList<T> implements IGenericList<T> {
 
     public get size(): number {
         return this.items.length;
-    }
-}
-
-export default class List<T> extends GenericList<T> {
-    public add(...items: T[]): this {
-        this.items.push(...items);
-
-        return this;
-    }
-
-    public clone(): List<T> {
-        return new List(...this.items);
     }
 }
